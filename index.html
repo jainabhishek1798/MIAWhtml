@@ -2,12 +2,39 @@
 <html>
 <head>
     <script src="https://cdn.jsdelivr.net/npm/cometd@8.0.8/cometd.js"></script>
+   
+    <script type="module">
+        import { CometD } from "https://cdn.jsdelivr.net/npm/cometd@8.0.8/cometd.js";
+
+        let cometd;
+
+        function initCometD() {
+            cometd = new CometD();
+
+            // Example configuration (replace with your server URL)
+            cometd.configure({
+                url: 'http://your-server:port/cometd'  // e.g., http://localhost:8080/cometd
+            });
+
+            cometd.handshake(reply => {
+                if (reply.successful) {
+                    console.log('CometD handshake successful');
+                    // Now subscribe, publish, etc.
+                } else {
+                    console.error('CometD handshake failed');
+                }
+            });
+        }
+
+        // Call it when ready
+        initCometD();
+    </script>
 </head>
 <body>
 
    <script type='text/javascript'>
     // 1️⃣ Declare globally
-    let cometd;
+   /* let cometd;
 
     function initCometD() {
         // 2️⃣ Create instance
@@ -42,9 +69,9 @@
     }
 
     // 5️⃣ Start everything
-    initCometD();
+    initCometD();*/
 </script>
-    <h1>Hello, GitHub3!</h1>
+    <h1>Hello, GitHub4!</h1>
     <p>This is my first HTML page.</p>
 </body>
 </html>
