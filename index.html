@@ -4,6 +4,34 @@
     <title>My First Page</title>
 </head>
 <body>
+    <script src="https://cdn.cometd.org/cometd.js"></script>
+    <script>
+        // Initialize CometD object
+var cometd = new org.cometd.CometD();
+
+// Configure the Salesforce endpoint
+var url = 'https://yourInstance.salesforce.com/cometd/52.0';
+cometd.configure({
+    url: url,
+    requestHeaders: {
+        Authorization: 'Bearer YOUR_ACCESS_TOKEN'
+    },
+    appendMessageTypeToURL: false
+});
+
+// Establish a connection to Salesforce
+cometd.handshake(function(handshakeReply) {
+    if (handshakeReply.successful) {
+        console.log('Connected to Salesforce!');
+        // Subscribe to the PushTopic channel
+        cometd.subscribe('/topic/AccountUpdates', function(message) {
+            console.log('Received message:', message);
+        });
+    } else {
+        console.error('Failed to connect to Salesforce:', handshakeReply);
+    }
+});
+    </script>
     <h1>Hello, GitHub!</h1>
     <p>This is my first HTML page.</p>
 </body>
