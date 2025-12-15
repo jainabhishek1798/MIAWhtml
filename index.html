@@ -1,34 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CometD Load Fix</title>
-
-    <!-- ✅ Load CometD FIRST -->
+    <title>My First Page</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cometd/5.0.8/cometd.min.js"></script>
+    <script src="https://cdn.cometd.org/cometd.js"></script>
 </head>
 <body>
 
-<h2>CometD Test</h2>
-
-<script>
-    // 🔍 DEBUG CHECK
-    console.log('CometD:', typeof CometD);
+   <script type='text/javascript'>
+    // 1️⃣ Declare globally
+    let cometd;
 
     function initCometD() {
-        if (typeof CometD === 'undefined') {
-            alert('❌ CometD NOT loaded');
-            return;
-        }
+        // 2️⃣ Create instance
+        cometd = new CometD.CometD();
 
-        alert('✅ CometD loaded');
+        cometd.configure({
+            url: 'https://YOUR_INSTANCE.my.salesforce.com/cometd/58.0/',
+            requestHeaders: {
+                Authorization: 'OAuth YOUR_ACCESS_TOKEN'
+            },
+            appendMessageTypeToURL: false
+        });
 
-        const cometd = new CometD.CometD();
-        console.log('CometD instance:', cometd);
+        // 3️⃣ Handshake
+        cometd.handshake(function (reply) {
+            if (reply.successful) {
+                console.log('✅ Handshake successful');
+                subscribeToEvent();
+            } else {
+                console.error('❌ Handshake failed', reply);
+            }
+        });
     }
 
-    // ✅ Run AFTER page loads
-    window.onload = initCometD;
-</script>
+    function subscribeToEvent() {
+        // 4️⃣ Use cometd AFTER handshake
+        cometd.subscribe('/event/Your_Event__e', function (message) {
+            console.log('📩 Event received:', message.data.payload);
+        });
+    }
 
+    // 5️⃣ Start everything
+    initCometD();
+</script>
+    <h1>Hello, GitHub2!</h1>
+    <p>This is my first HTML page.</p>
 </body>
 </html>
