@@ -1,1 +1,215 @@
-
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+  <script type="text/javascript" async="true" src="https://play.vidyard.com/embed/v4.js"></script>
+        <script src="/soap/ajax/62.0/connection.js"></script>
+        <script src="/soap/ajax/62.0/apex.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+        
+        <apex:includeLightning /> 
+        <apex:slds />
+        <div class="slds-p-around_large" style="float: right;">
+            <button class="slds-button slds-button_icon"   onclick="clickTargetButton()" type="button" aria-label="Chat" title="Chat" id="chatbutton" >
+                <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                    <use xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#chat')}"></use>
+                </svg>
+                <span class="slds-assistive-text">Chat</span>
+            </button>
+        </div>
+        <script type='text/javascript'>
+        var onload = true;
+        window.onload = function () {
+            console.log('Page fully loaded');
+            let intervalId = setInterval(() => {
+                console.log('page load interval');
+                if(embeddedservice_bootstrap.utilAPI != undefined){
+                openChatWidget();
+                clearInterval(intervalId);
+            }
+            }, 1000); 
+            };
+                
+                var MIAWtoken = "eyJraWQiOiJqd3RrZXkiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJTWElTSldUSXNzdWVyIiwiYXVkIjoiU2FsZXNGb3JjZS1DSEFUIiwiZXhwIjoxNzcxMzMzNzQ3LCJpYXQiOjE3NzEzMzMxNDcsIm5iZiI6MTc3MTMzMzE0Nywic3ViIjoiOTk0NTMzMDEyIn0.QRaMq37uilL5iNmGLK-JNHrErYvO8uFu6xP46l_tYKljgi_U93HJyX0ljRmyTCB7GabEGoPQK115VzrrEzEm_8cp4jT46cMcOQj7Ei94QCxy_ntBre3r0ZB54Aw1oe4bYHCLU0Dz_6Psjit6eOqseJLP0O8JTiu8KP9_ierXIc_mn005BKGSTdWAea98I5AckXKFBQjc9v-Nn1Xf4jUaobuJQiPcH_2CNXpg4oWyXsKUoI_RaxjpKaMvgkymVVSpUF4-IsmBvzd4HSOSmIe19tCiU78Cn2vUUczPMeuXeehdoGPP_gPu3ykzjVWoA5nqGpOdYAizMjLYdyd6falefg";
+                var orgId = '00DWJ000006MeWP';
+                var scrt2url = 'https://nylic--devrelease.sandbox.my.salesforce-scrt.com';
+                
+                var esdURL = 'https://nylic--devrelease.sandbox.my.site.com/ESWSRVCMIAW1758536467833';
+                function clickTargetButton() {
+                embeddedservice_bootstrap.utilAPI
+                .launchChat()
+                .then(() => {
+                console.log('success');
+            }).catch((err) => {
+                console.error('Launch Chat error:', err);
+                
+            }).finally(() => {
+                
+            });
+                const chatIframe = document.getElementById('embeddedMessagingFrame');            
+                if (chatIframe) {
+                chatIframe.style.removeProperty('position');
+                chatIframe.style.removeProperty('right');
+            }
+                
+            }
+                function openChatWidget() {
+                embeddedservice_bootstrap.utilAPI
+                .launchChat()
+                .then(() => {
+                console.log('success');
+                const chatIframe = document.getElementById('embeddedMessagingFrame');            
+                if (chatIframe) {
+                chatIframe.style.position = 'absolute';
+                chatIframe.style.right = '9999px';
+            }
+            }).catch((err) => {
+                console.error('Launch Chat error:', err);
+                
+            }).finally(() => {
+                
+            });
+            }
+                
+                window.addEventListener("onEmbeddedMessagingReady", () => {
+                console.log("Received the onEmbeddedMessagingReady event.");
+                // Send your identity token to Salesforce.
+                embeddedservice_bootstrap.userVerificationAPI.setIdentityToken({
+                identityTokenType: "JWT",
+                identityToken: MIAWtoken
+            });
+        });
+        
+        window.addEventListener("onEmbeddedMessagingIdentityTokenExpired", () => {
+            console.log("Received the onEmbeddedMessagingIdentityTokenExpired event.");
+            
+            // Refresh the identity token and send it to Salesforce.
+            embeddedservice_bootstrap.userVerificationAPI.setIdentityToken({
+            identityTokenType: "JWT",
+            identityToken: MIAWtoken
+        });
+        });
+        
+        function initEmbeddedMessaging() {
+            try {
+                embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+                // Hide at initialization
+                embeddedservice_bootstrap.settings.hideChatButtonOnLoad = true;
+                embeddedservice_bootstrap.settings.chatButtonPosition = "9999px,9999px";
+                
+                embeddedservice_bootstrap.init(
+                    orgId,
+                    'SRVC_MIAW',
+                    esdURL,
+                    {
+                        scrt2URL: scrt2url
+                    }
+                );
+                var tokenData = MIAWtoken;
+                
+                let hiddenPrechatFields = {"Client_Id": tokenData};
+                
+                window.addEventListener("message", (event) => {
+                    console.log('event '+JSON.stringify(event.data));
+                    console.log('eventtype '+JSON.stringify(event.type));
+                    console.log('eventname '+event.data.eventName);
+                    
+                    if (event.data && event.data?.data?.eventName === "onEmbeddedMessagingSessionStatusUpdate") {
+                    console.log("Received onEmbeddedMessagingSessionStatusUpdate event");
+                    // Get Messaging for Web Iframe element reference.
+                    let miaw_chat_iframe = embeddedservice_bootstrap.utilAPI.getEmbeddedMessagingFrame();
+                    // Send a postMessage event directly to the custom LWC with the data requested.
+                    miaw_chat_iframe.contentWindow.postMessage(
+                    {
+                    "eventName": "ESW_CHAT_ENDED",
+                    "data": hiddenPrechatFields
+                },
+                                        esdURL
+                                       );
+            }
+            
+            if (event.data && event.data.eventName === "request_hidden_prechat_fields") {
+                console.log("Received request_hidden_prechat_fields event");
+                // Get Messaging for Web Iframe element reference.
+                let miaw_chat_iframe = embeddedservice_bootstrap.utilAPI.getEmbeddedMessagingFrame();
+                // Send a postMessage event directly to the custom LWC with the data requested.
+                miaw_chat_iframe.contentWindow.postMessage(
+                    {
+                        "eventName": "receive_hidden_prechat_fields",
+                        "data": hiddenPrechatFields
+                    },
+                    esdURL
+                );
+            }
+            
+            if (event.data && event.data.eventName === "get_Client_Id_Event") {
+                console.log("Received get client_id event");
+                // Get Messaging for Web Iframe element reference.
+                let miaw_chat_iframe = embeddedservice_bootstrap.utilAPI.getEmbeddedMessagingFrame();
+                // Send a postMessage event directly to the custom LWC with the data requested.
+                miaw_chat_iframe.contentWindow.postMessage(
+                    {
+                        "eventName": "set_Client_Id_Event",
+                        "data": hiddenPrechatFields
+                    },
+                    esdURL
+                );
+            }
+            if (event.data && event.data.eventName === 'ESW_DISPLAY_CHAT_BUTTON') {
+                const el = document.getElementById('chatbutton');
+                if (el) {
+                    el.style.display = 'block';
+                }
+            }
+            if (event.data && event.data.eventName === 'ESW_HIDE_CHAT_BUTTON') {
+                const el = document.getElementById('chatbutton');
+                if (el) {
+                    el.style.display = 'none';
+                }
+            }
+            if (event.data && event.data.eventName === 'ESW_APP_MINIMIZE') {
+                const chatIframe = document.getElementById('embeddedMessagingFrame');            
+                if (chatIframe) {
+                    chatIframe.style.height = '50px'; 
+                    chatIframe.style.minHeight  = '50px';
+                }
+            }
+            if (event.data && event.data.eventName === 'ESW_APP_MAXIMIZE') {
+                const chatIframe = document.getElementById('embeddedMessagingFrame');            
+                if (chatIframe) {
+                    chatIframe.style.height = '565px'; 
+                    chatIframe.style.minHeight  = '565px';
+                }
+            }
+            if (event.data.method == 'ESW_APP_READY_EVENT') {
+                const chatIframe = document.getElementById('embeddedMessagingFrame');     
+                console.log('ESW_APP_READY_EVENT');
+                if (chatIframe) {
+                    if(onload){
+                        //chatIframe.style.position = 'absolute'; 
+                        //chatIframe.style.right  = '999999px'; 
+                        onload= false;
+                    }
+                }
+            }
+            if (event.data && event.data.eventName === 'ESW_CHAT_NOW_CLICKED') {
+                let miaw_chat_iframe = embeddedservice_bootstrap.utilAPI.getEmbeddedMessagingFrame();
+                // Send a postMessage event directly to the custom LWC with the data requested.
+                miaw_chat_iframe.contentWindow.postMessage(
+                    {
+                        "eventName": "ESW_CHAT_NOW_CLICKED"
+                    },
+                    esdURL
+                );
+            }
+        });
+        } catch (err) {
+            console.error('Error loading Embedded Messaging: ', err);
+        }
+        };
+        </script>
+        <script type='text/javascript' src='https://nylic--devrelease.sandbox.my.site.com/ESWSRVCMIAW1758536467833/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+       
+</body>
+</html>
