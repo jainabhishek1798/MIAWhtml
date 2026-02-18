@@ -1,6 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+<title>Chat Icon Example</title>
+
+<!-- Font Awesome for Chat Icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    body {
+        margin: 0;
+        height: 200vh; /* Just for scrolling demo */
+        font-family: Arial, sans-serif;
+    }
+
+    /* Chat Button */
+    .chat-icon {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #007bff;
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        transition: 0.3s ease;
+        z-index: 1000;
+    }
+
+    .chat-icon:hover {
+        background-color: #0056b3;
+        transform: scale(1.1);
+    }
+</style>
 </head>
 <body>
   <script type="text/javascript" async="true" src="https://play.vidyard.com/embed/v4.js"></script>
@@ -10,14 +48,17 @@
         
         <apex:includeLightning /> 
         <apex:slds />
-        <div class="slds-p-around_large" style="float: right;">
+        <!--<div class="slds-p-around_large" style="float: right;">
             <button class="slds-button slds-button_icon"   onclick="clickTargetButton()" type="button" aria-label="Chat" title="Chat" id="chatbutton" >
                 <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
                     <use xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#chat')}"></use>
                 </svg>
                 <span class="slds-assistive-text">Chat</span>
             </button>
-        </div>
+        </div>-->
+          <div class="chat-icon" onclick="clickTargetButton()">
+    <i class="fas fa-comments"></i>
+</div>
         <script type='text/javascript'>
         var onload = true;
         window.onload = function () {
